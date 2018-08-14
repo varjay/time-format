@@ -1,6 +1,7 @@
 {
-    "name": "mixed-sort",
-    "shortname": "MSort",
+    "name": "time-format",
+    "shortname": "timeformat",
+    "root": "TimeFormat",
     "version": "0.0.1",
     "description": "",
     "main": "index.js",

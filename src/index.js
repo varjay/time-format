@@ -1,108 +1,80 @@
-import sortzh from './sortzh'
+import Languages from './lang/index'
 
-function switchkey (obj, sortName) {
-  let r
-  if (/^[a-zA-z]/.test(obj[sortName] ? obj[sortName] : '没有')) {
-    r = obj.en2zh
+function getwhen (timestamp) {
+  var dd = new Date()
+  var now = dd.getTime()
+  var todayStart = `${dd.getFullYear()}/${dd.getMonth() + 1}/${dd.getDate()} 00:00:00`
+  todayStart = new Date(todayStart).getTime()
+  var diff = now - timestamp
+  // console.log(now)
+  /*
+   * 小于分钟、小于小时、小于一天、小于两天、小于7天
+   * 60000    3600000 86400000 172800000 604800000
+   **/
+  if (diff < 6000) {
+    return 'seconds'
+  } else if (diff < 3600000) {
+    return 'minutes'
+  } else if (timestamp >= todayStart) {
+    return 'today'
+  } else if (timestamp > todayStart - 86400000) {
+    return 'yesterday'
+  } else if (timestamp > todayStart - 604800000) {
+    return 'week'
   } else {
-    r = obj[sortName]
+    return 'full'
   }
-  if (!r) {
-    return obj.zh
-  }
-  return r
 }
 
-function main (arr, sortName, isTag = 1) {
-  arr = arr.concat(sortzh)
-  // 暂时无法对i u v 排序
-  const LETTERS = 'abcdefghjklmnopqrstwxyz'.split('')
-  const ZH = '安贝苍邓妸范葛胡杰科黎迈倪噢潘全呥萨特王希杨扎'.split('')
-  let iArr = [{zh: '存在', le: 'i'}]
-  let uArr = [{zh: '存在', le: 'u'}]
-  let vArr = [{zh: '存在', le: 'v'}]
-  for (var i = arr.length - 1; i >= 0; i--) {
-    if (arr[i][sortName] && /^[a-zA-Z]/.test(arr[i][sortName])) {
-      let a = LETTERS.indexOf(arr[i][sortName][0].toLowerCase())
-      if (a > -1) {
-        arr[i]['en2zh'] = ZH[a]
-        arr[i]['le'] = arr[i][sortName][0]
-      } else {
-        let letter = arr[i][sortName][0]
-        let isIUV = 0
-        switch (letter) {
-          case 'i': iArr.push(arr[i]); isIUV = 1; break
-          case 'u': uArr.push(arr[i]); isIUV = 1; break
-          case 'v': vArr.push(arr[i]); isIUV = 1; break
-        }
-        if (isIUV) {
-          arr.splice(i, 1)
-        }
-      }
-    }
+function TimeFormat(format, time, options) {
+  var timestamp = time
+  var date
+  if ((typeof time) === 'string' && time.length !== 13) {
+    // 日期转为时间戳
+    time = time.replace(/-/g, '/')
+    timestamp = new Date(time).getTime()
+  }
+  date = new Date(timestamp * 1)
+
+  var year = date.getFullYear()     // 获取完整的年份(4位,1970-????)
+  var month = date.getMonth() + 1   // 获取当前月份(0-11,0代表1月)
+  var day = date.getDate()          // 获取当前日(1-31)
+  var week = date.getDay()          // 获取当前星期X(0-6,0代表星期天)
+  var hours = date.getHours()       // 获取当前小时数(0-23)
+  var minutes = date.getMinutes()   // 获取当前分钟数(0-59)
+  var seconds = date.getSeconds()   // 获取当前秒数(0-59)
+
+  var localLang = navigator.language.replace(/-/g, '').toLowerCase()
+  var Lang
+  var template
+  var type = getwhen(timestamp)
+  // console.log(type)
+  switch (localLang) {
+    case 'zhcn': Lang = Languages.zhcn; break
+    default: Lang = Languages.en
   }
 
-  arr.sort(
-    function compareFunction (param1, param2) {
-      let one = switchkey(param1, sortName)
-      let two = switchkey(param2, sortName)
-      let r = one.localeCompare(two, 'zh-CN')
-      return r
+  if (format === 'detail' || format === 'short' || format === 'ago') {
+    let _type
+    if (type === 'seconds' || type === 'minutes') {
+      _type = 'today'
+    } else {
+      _type = type
     }
-  )
+    var local = new Lang(month, week)
+    template = local.getFormat(format, _type)
+    format = template
+  }
+  format = format.replace('yyyy', year)
+  format = format.replace('MM', month < 10 ? '0' + month : month)
+  format = format.replace('dd', day < 10 ? '0' + day : day)
+  format = format.replace('HH', hours < 10 ? '0' + hours : hours)
+  format = format.replace('mm', minutes < 10 ? '0' + minutes : minutes)
 
-  // 处理iuv
-  let numI = sortzh[8]
-  let positionI = arr.indexOf(numI)
-  for (let i = iArr.length - 1; i >= 0; i--) {
-    arr.splice(positionI, 0, iArr[i])
-  }
-  let UV = uArr.concat(vArr)
-  let numV = sortzh[19]
-  let positionV = arr.indexOf(numV)
-  for (let i = UV.length - 1; i >= 0; i--) {
-    arr.splice(positionV, 0, UV[i])
-  }
-
-  // 分离无法识别的项目
-  let noSort = []
-  let delPosition = -1
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].le === 'a') {
-      break
-    }
-    noSort.push(arr[i])
-    delPosition = i
-  }
-  arr.splice(0, delPosition + 1)
-  for (let i = arr.length - 1; i >= 0; i--) {
-    if (/^[\u4e00-\u9fa5a-zA-Z]/.test(arr[i][sortName])) {
-      break
-    }
-    noSort.push(arr[i])
-    arr.splice(i, 1)
-  }
-  if (noSort.length > 0) {
-    arr = arr.concat({zh: '#', le: '#'}, noSort)
-  }
-
-  if (isTag) {
-    // 删除空的项目
-    for (let i = arr.length - 1; i >= 0; i--) {
-      if (arr[i].zh && arr[i + 1] && arr[i + 1].zh) {
-        arr.splice(i, 1)
-      }
-    }
-  } else {
-    for (let i = arr.length - 1; i >= 0; i--) {
-      if (arr[i].zh) {
-        arr.splice(i, 1)
-      }
-    }
-  }
-  return arr
+  format = format.replace('ss', seconds < 10 ? '0' + seconds : seconds)
+  return format
 }
 
-main.Version = '0.0.1'
+TimeFormat.Version = '0.0.1'
 
-export default main
+export default TimeFormat
