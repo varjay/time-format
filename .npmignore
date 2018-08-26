@@ -1,0 +1,10 @@
+.github/
+.DS_Store
+.npm-debug.log
+.babelrc
+.npmignore
+.eslintrc.js
+.prettierrc.js
+package-lock.json
+webpack.config.js
+webpack.production.js

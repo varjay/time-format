@@ -1,6 +1,6 @@
 /*!
- * time-format
- * @version 0.0.1
+ * time-format-js
+ * @version 0.0.5
  * @see https://github.com/varjay/
  */
 (function webpackUniversalModuleDefinition(root, factory) {

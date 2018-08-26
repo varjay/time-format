@@ -16,8 +16,6 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    libraryExport: 'default',
-    library: PKG.shortname,
     libraryTarget: 'umd',
   },
   module: {
