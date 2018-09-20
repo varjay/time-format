@@ -44,7 +44,12 @@ function TimeFormat(format, time, options) {
   var minutes = date.getMinutes()   // 获取当前分钟数(0-59)
   var seconds = date.getSeconds()   // 获取当前秒数(0-59)
 
-  var localLang = navigator.language.replace(/-/g, '').toLowerCase()
+  var localLang 
+  try {
+    localLang = navigator.language.replace(/-/g, '').toLowerCase()
+  } catch(e) {
+    localLang = 'zhcn'
+  }
   var Lang
   var template
   var type = getwhen(timestamp)

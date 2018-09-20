@@ -20,11 +20,11 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   test: /\.js$/,
-      //   loader: 'babel-loader',
-      //   exclude: /node_modules/,
-      // },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+      },
       {
         test: /\.vue$/,
         use: 'vue-loader'
@@ -78,6 +78,7 @@ module.exports = {
     ],
   },
   devServer: {
+    host: "0.0.0.0",
     contentBase: path.join(__dirname, "demo/public"),
     compress: true,
     hot: true,
