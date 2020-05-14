@@ -2,7 +2,7 @@
     "name": "time-format-js",
     "shortname": "timeformat",
     "root": "TimeFormat",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Localized time formatting library.",
     "main": "src/index.js",
     "module": "src/index.js",
