@@ -55,7 +55,11 @@
         "webpack-dev-server": "^3.1.4",
         "webpack-merge": "^4.1.2"
     },
-    "keywords": ["timeformat", "conversion", "时间转换"],
+    "keywords": [
+        "timeformat",
+        "conversion",
+        "时间转换"
+    ],
     "author": "virjay",
     "githubAccount": "varjay",
     "license": "MIT"

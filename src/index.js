@@ -56,6 +56,7 @@ function TimeFormat(format, time, options) {
   // console.log(type)
   switch (localLang) {
     case 'zhcn': Lang = Languages.zhcn; break
+    case 'zhhanscn': Lang = Languages.zhcn; break
     default: Lang = Languages.en
   }
 
